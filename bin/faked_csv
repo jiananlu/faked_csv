@@ -1,0 +1,4 @@
+#!/usr/bin/env ruby
+
+require 'faked_csv/cli'
+FakedCSV::CLI.start
