@@ -20,5 +20,10 @@ Scenario: Generate basic csv into default output file
 
 Scenario: Find no default files
     When I run `faked_csv`
-    Then the output should contain "error openning input file: No such file or directory"
+    Then the output should contain "error openning the input source: No such file or directory"
     And the output should contain "./faked.csv.json"
+
+Scenario: Getting from HTTP
+    When I run `faked_csv -i http://goo.gl/xDtkJs -o remote.csv`
+    Then the output should contain exactly ""
+    And the file "remote.csv" should contain "ID,First Name,Last Name,City,State,Age,Height"

@@ -119,7 +119,11 @@ Letb8,John,Frami,South Reese,HI,65,170.57
 
 ## CLI Options
 
-`-i` to specify the input json configuration file. If omitted, the program will try to find `./faked.csv.json` by default.
+`-i` to specify the input json configuration file. If omitted, the program will try to find `./faked.csv.json` by default. You can also specify a remote URL of the configuration file.
+
+```
+faked_csv -i http://goo.gl/xDtkJs -o remote.csv
+```
 
 `-o` to specify the output CSV file path. If omitted, the program will print the data to stdout.
 

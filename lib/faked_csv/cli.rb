@@ -1,5 +1,7 @@
 require 'optparse'
 require 'json'
+require 'open-uri'
+require 'open_uri_redirections'
 require 'faked_csv'
 
 module FakedCSV
@@ -25,9 +27,19 @@ module FakedCSV
 
             json = nil
             begin
-                json = File.read options[:input]
+                if options[:input] =~ /^http/
+                    # remote resouce
+                    open(options[:input], allow_redirections: :all) do |f|
+                        arr = []
+                        f.each_line {|line| arr << line}
+                        json = arr.join("\n")
+                    end
+                else
+                    # normal file
+                    json = File.read options[:input]
+                end
             rescue Exception=>e
-                puts "error openning input file: #{e.to_s}"
+                puts "error openning the input source: #{e.to_s}"
                 exit 1
             end
 
