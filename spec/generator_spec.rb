@@ -93,6 +93,34 @@ describe FakedCSV::Generator do
         end
     end
 
+    it "generates random data from basic csv" do
+        generator = FakedCSV::Generator.new FakedCSV::Config.new JSON.parse File.read 'spec/data/basic.csv.json'
+        generator.generate
+        f = generator.config.fields
+        f.each{|ff| ff[:data].size.should == 200}
+        f[0][:data].each{|d|d.size.should == 5}
+        f[1][:data].each do |d|
+            f[1][:values].include?(d).should == true
+        end
+        f[1][:data].uniq.size.should == f[1][:values].size
+        f[2][:inject].each do |inj|
+            f[2][:data].include?(inj).should == true
+        end
+        f[3][:data].uniq.size.should == 40
+        f[4][:data].uniq.size.should == 10
+        f[4][:data].include?("CA").should == true
+        f[5][:data].each do |d|
+            d.kind_of?(Integer).should == true
+            (d >= 10 && d <= 80).should == true
+        end
+        f[6][:data].uniq.size.should == 20
+        f[6][:data].include?(200).should == true
+        f[6][:data].include?(210).should == true
+        f[6][:data].each do |d|
+            ((d >= 150 && d <= 190) || d == 200 || d == 210).should == true
+        end
+    end
+
     it "provides data as rows" do
         generator = FakedCSV::Generator.new FakedCSV::Config.new JSON.parse File.read 'spec/data/rotate.csv.json'
         generator.generate

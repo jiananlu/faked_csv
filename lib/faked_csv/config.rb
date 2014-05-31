@@ -101,10 +101,11 @@ module FakedCSV
         def _validate_rotate(rotate)
             if rotate.to_s.include? "rows/"
                 div = rotate.split("/")[1].to_i
-                @row_count / div
+                r = @row_count / div
             else
-                rotate.to_i
+                r = rotate.to_i
             end
+            return r > @row_count ? @row_count : r
         end
     end
 end

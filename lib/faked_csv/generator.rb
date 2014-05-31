@@ -31,41 +31,19 @@ module FakedCSV
 
                 # let's get some data!
                 if field[:rotate].nil? || field[:type] == :fixed
-                    # not rotating? generate random value each time
+                    # not rotating? or fixed values? generate random value each time
                     @config.row_count.times do
                         field[:data] << _random_value(field)
                     end
 
-                    # inject user values if given
-                    unless field[:inject].nil?
-                        used_indexes = {}
-                        field[:inject].each do |inj|
-                            times_inject = rand(@config.row_count / field[:inject].size / 10)
-                            times_inject = 1 if times_inject < 1
-                            times_inject.times do
-                                rand_index = rand(@config.row_count)
-                                _loop do
-                                    break unless used_indexes.has_key? rand_index
-                                    rand_index = rand(@config.row_count)
-                                end
-                                field[:data][rand_index] = inj
-                                used_indexes[rand_index] = true
-                            end
-                        end
+                    # inject user values if given and not fixed type
+                    unless field[:type] == :fixed || field[:inject].nil?
+                        _random_inject(field[:data], field[:inject])
                     end
                 else
                     # rotating? pick from prepared values
-                    used_indexes = {}
-                    _randomize_lengths(@config.row_count, field[:rotate]) do |index, length|
-                        length.times do
-                            rand_index = rand(@config.row_count)
-                            _loop do
-                                break unless used_indexes.has_key? rand_index
-                                rand_index = rand(@config.row_count)
-                            end
-                            field[:data][rand_index] = field[:values][index]
-                            used_indexes[rand_index] = true
-                        end
+                    _random_distribution(@config.row_count, field[:values].size) do |i, j|
+                        field[:data][i] = field[:values][j]
                     end
                 end
             end
@@ -89,6 +67,8 @@ module FakedCSV
                 unless field[:inject].nil?
                     field[:inject].each do |inj|
                         values[inj] = true
+                        # truncate more inject values if we go over the rows count
+                        break if values.size == @config.row_count
                     end
                 end
                 # then generate as many data as we need
@@ -102,22 +82,42 @@ module FakedCSV
             end
         end
 
-        # divide total into <parts> parts and feed to yield each time
-        def _randomize_lengths(total, parts)
-            indexes = {}
-            parts.times do
-                index = rand(total)
-                _loop do
-                    break unless indexes.has_key? index
-                    index = rand(total)
-                end
-                indexes[index] = true
+        def _random_distribution(total, parts)
+            raise "parts has to be greater than 0" unless parts > 0
+            raise "parts should not be greater than total" if total < parts
+            cuts = {}
+            _loop do
+                break if cuts.size == parts - 1
+                cuts[rand(total - 1)] = true
             end
-            indexes[total] = true # add the last boundary
-            cuts = indexes.keys.sort
-            (0...cuts.size - 1).each_with_index do |idx, c|
-                length = cuts[c + 1] - cuts[c]
-                yield(idx, length)
+            arr = []
+            part_index = 0
+            (0...total).each do |i|
+                arr << part_index
+                part_index += 1 if cuts.has_key? i
+            end
+            arr.shuffle.each_with_index do |v, i|
+                yield(i, v)
+            end
+        end
+
+        # inject <injects> into <values>
+        def _random_inject(values, injects)
+            used_indexes = {}
+            count = injects.size > values.size ? values.size : injects.size
+            (0...count).each do |i|
+                inj = injects[i]
+                times_inject = rand(values.size / injects.size / 10)
+                times_inject = 1 if times_inject < 1
+                times_inject.times do
+                    rand_index = rand(values.size)
+                    _loop do
+                        break unless used_indexes.has_key? rand_index
+                        rand_index = rand(values.size)
+                    end
+                    used_indexes[rand_index] = true
+                    values[rand_index] = inj
+                end
             end
         end
 
