@@ -35,6 +35,24 @@ module FakedCSV
                     @config.row_count.times do
                         field[:data] << _random_value(field)
                     end
+
+                    # inject user values if given
+                    unless field[:inject].nil?
+                        used_indexes = {}
+                        field[:inject].each do |inj|
+                            times_inject = rand(@config.row_count / field[:inject].size / 10)
+                            times_inject = 1 if times_inject < 1
+                            times_inject.times do
+                                rand_index = rand(@config.row_count)
+                                _loop do
+                                    break unless used_indexes.has_key? rand_index
+                                    rand_index = rand(@config.row_count)
+                                end
+                                field[:data][rand_index] = inj
+                                used_indexes[rand_index] = true
+                            end
+                        end
+                    end
                 else
                     # rotating? pick from prepared values
                     used_indexes = {}

@@ -1,0 +1,10 @@
+{
+  "rows": 10,
+  "fields": [
+    {
+      "name": "inject without rotate",
+      "type": "faker:name:first_name",
+      "inject": ["aa", "bb"]
+    }
+ ]
+}

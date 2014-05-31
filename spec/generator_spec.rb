@@ -102,4 +102,11 @@ describe FakedCSV::Generator do
             row.size.should == 6
         end
     end
+
+    it "handles inject without rotate" do
+        generator = FakedCSV::Generator.new FakedCSV::Config.new JSON.parse File.read 'spec/data/inject.csv.json'
+        generator.generate
+        generator.config.fields[0][:data].include?("aa").should == true
+        generator.config.fields[0][:data].include?("bb").should == true
+    end
 end
