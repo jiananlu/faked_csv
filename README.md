@@ -182,7 +182,7 @@ Random characters. Only A-Z, a-z and 0-9 will be considered as characters.
 
 `length` to specify how many characters in each of the generated data, e.g. 15 will give you something like `9mLcZHR9H5V7pg9`. This is particularly useful if you want to mimic something like item ID, access token etc.
 
-#### faker:<class>:<method>
+#### faker:[class]:[method]
 
 This indicates you want to use one of the methods from Faker gem. You can find the list of all methods from [Faker gem's documentation](http://rubydoc.info/github/stympy/faker). Each method is a class name and a method name. Example, `Faker::Internet.url` can be mapped to `faker:internet:url` as a field type in the configuration. As current version, we don't support parameters into the faker method. Future version will add such support.
 
