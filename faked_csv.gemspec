@@ -25,7 +25,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "aruba", "~> 0.5"
   spec.add_development_dependency "byebug", "~> 3.1"
 
-  spec.add_dependency "thor", "~> 0.19"
   spec.add_dependency "faker", "~> 1.3"
   spec.add_dependency "json", "~> 1.8"
 end

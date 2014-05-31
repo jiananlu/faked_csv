@@ -1,0 +1,36 @@
+{
+  "rows": 10,
+  "fields": [
+    {
+      "name": "faker no rotate",
+      "type": "faker:name:first_name"
+    },
+    {
+      "name": "faker with rotate",
+      "type": "faker:name:first_name",
+      "rotate": 10
+    },
+    {
+      "name": "faker with rotate and inject",
+      "type": "faker:name:first_name",
+      "rotate": 10,
+      "inject": ["aaa", "bbb"]
+    },
+
+    {
+      "name": "rand int no rotate",
+      "type": "rand:int"
+    },
+    {
+      "name": "rand int with rotate",
+      "type": "rand:int",
+      "rotate": 10
+    },
+    {
+      "name": "rand int with rotate and inject",
+      "type": "rand:int",
+      "rotate": 10,
+      "inject": [11, 12, 13]
+    }
+ ]
+}

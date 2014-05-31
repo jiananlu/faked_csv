@@ -2,8 +2,7 @@ require 'spec_helper'
 
 describe FakedCSV::Fakerer do
     it "validates input type" do
-        f = FakedCSV::Fakerer.new("faker:name:last_name")
-        f.fake_single.size.should > 1
+        FakedCSV::Fakerer.new("faker:name:last_name").fake.size.should > 1
     end
 
     it "invalidates input type: class" do
@@ -25,9 +24,5 @@ describe FakedCSV::Fakerer do
             raised = true
         end
         raise "not raised invalid faker method" unless raised
-    end
-
-    it "fakes many values" do
-        FakedCSV::Fakerer.new("faker:name:first_name").fake_many(10).size.should == 10
     end
 end

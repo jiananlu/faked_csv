@@ -16,16 +16,7 @@ module FakedCSV
             end
         end
 
-        def fake_many(count = 1)
-            arr = {}
-            loop do
-                arr[fake_single] = true
-                break if arr.keys.size == count
-            end
-            arr.keys
-        end
-
-        def fake_single
+        def fake
             begin
                 @class.send @method
             rescue

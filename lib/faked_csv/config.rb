@@ -1,17 +1,27 @@
 module FakedCSV
     class Config
-        attr_reader :config, :fields
+        attr_reader :config, :fields, :row_count
 
         def initialize(config)
             @config = config
         end
 
+        def fields
+            parse if @fields.nil? # parse first if not parsed yet
+            @fields
+        end
+
+        def headers
+            fields.map{|f| f[:name]}
+        end
+
         # prepare the json config and generate the fields
-        def prepare
+        def parse
             if @config["rows"].nil? || @config["rows"].to_i < 0
-                raise "need 'rows' in the config file and it should be greater than 0"
+                @row_count = 100 # default value
+            else
+                @row_count = @config["rows"].to_i
             end
-            @row_count = @config["rows"].to_i
 
             @fields = []
             if @config["fields"].nil? || @config["fields"].empty?
@@ -31,8 +41,8 @@ module FakedCSV
                 end
                 field[:type] = cfg["type"].to_s
 
-                unless cfg["inject"].nil? || cfg["inject"].empty?
-                    field[:inject] = cfg["inject"]
+                unless cfg["inject"].nil? || cfg["inject"].empty? || !cfg["inject"].kind_of?(Array)
+                    field[:inject] = cfg["inject"].uniq # get rid of duplicates
                 end
 
                 unless cfg["rotate"].nil?
@@ -56,6 +66,7 @@ module FakedCSV
                     else
                         field[:min], field[:max] = _min_max cfg["range"]
                     end
+                    field[:precision] = cfg["precision"].nil? ? 1 : cfg["precision"].to_i
                 when /rand:char/i
                     field[:type] = :rand_char
                     field[:length] = cfg["length"].nil? ? 10 : cfg["length"]
@@ -71,10 +82,6 @@ module FakedCSV
 
                 fields << field
             end
-        end
-
-        def generate
-            # TODO finish this
         end
 
         def _supported_types
