@@ -23,7 +23,6 @@ module FakedCSV
             end.parse!(args)
 
             options[:input] = './faked.csv.json' unless options.has_key? :input
-            options[:output] = './faked.csv' unless options.has_key? :output
 
             json = nil
             begin
@@ -47,6 +46,11 @@ module FakedCSV
             generator.generate
             printer = FakedCSV::Printer.new(generator.headers, generator.rows)
             s = printer.print
+
+            unless options.has_key? :output
+                puts s
+                return
+            end
 
             begin
                 File.open options[:output], 'w' do |f|

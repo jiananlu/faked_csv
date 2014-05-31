@@ -13,10 +13,9 @@ Scenario: Generate basic csv
     Then the output should contain exactly ""
     And the file "output.csv" should contain "ID,First Name,Last Name,City,State,Age,Height"
 
-Scenario: Generate basic csv into default output file
+Scenario: Generate basic csv and print to stdout
     When I run `faked_csv -i ../../spec/data/basic.csv.json`
-    Then the output should contain exactly ""
-    And the file "faked.csv" should contain "ID,First Name,Last Name,City,State,Age,Height"
+    Then the output should contain "ID,First Name,Last Name,City,State,Age,Height"
 
 Scenario: Find no default files
     When I run `faked_csv`
