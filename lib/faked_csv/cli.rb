@@ -13,7 +13,7 @@ module FakedCSV
                 opts.on("-i", "--input JSON", "input path to json configuration file. default: ./faked.csv.json") do |input|
                     options[:input] = input
                 end
-                opts.on("-o", "--output CSV", "output path to csv file. default: ./faked.csv") do |output|
+                opts.on("-o", "--output CSV", "output path to csv file. default: <stdout>") do |output|
                     options[:output] = output
                 end
                 opts.on("-v", "--version", "print version message") do
