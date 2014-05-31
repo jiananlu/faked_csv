@@ -1,6 +1,6 @@
 # Faking CSV data made easy
 
-faked_csv, using the awesome [Faker](https://github.com/stympy/faker) gem, helps you to generate fake random data in your specified way. You may find it particularly useful when using the generated CSV in testing.
+faked_csv, using the awesome [Faker](https://github.com/stympy/faker) gem, helps you to generate CSV file with fake random data in your specified way. You may find it particularly useful in testing something out.
 
 ## Installation
 
@@ -24,45 +24,58 @@ For each faked CSV file, you first create a `<name>.csv.json` file that contains
 
 ## Example
 
-A simple example `.csv.json` file looks like the following. Noted, JSON file doesn't support inline comment, so the below example is only for illustration. You can use the `example.csv.json` file in the root folder of the source code as a boilerplate.
+A simple example `.csv.json` file looks like the following. Noted, JSON file doesn't support inline comment, so the below example is only for illustration. You can use the `example.csv.json` file in the root folder of the source code as a boilerplate. More details on the configuration file are in later section.
 
 ```
 {
-  "rows": 200, <-- the rows of the generated csv
-  "fields": {  <-- all the fields/columns of the generated csv
-    "First Name": {  <-- the field/column name
-      "type": "fixed",  <-- this means only the given values will be used
+  "rows": 200, <- how many rows in the generated CSV
+  "fields": [  <- a list of fields/columns in the generated CSV
+    {
+      "name": "ID",        <- field/column name
+      "type": "rand:char", <- type/format of the field
+      "length": 5          <- 5 characters random word
+    },
+    {
+      "name": "First Name",
+      "type": "fixed",     <- values will only come from the below list
       "values": ["Peter", "Tom", "Jane", "Tony", "Steve", "John"]
     },
-    "Last Name": {
-      "type": "faker:name:last_name" <-- the random data format
-      "values": ["Smith", "Lu"]  <-- "must-have" will appear at least once
+    {
+      "name": "Last Name",
+      "type": "faker:name:last_name", <- via Faker::Name.last_name method
+      "inject": ["Lu", "Smith"]       <- "must-have" values
     },
-    "City": {
-      "type": "faker:address:city",
-      "count": "rows/2" <-- how many choices/unique data for random process.
-                            in this case there will be 100 random fake cities as values 
-                            for the City field in the csv file.
+    {
+      "name": "City",
+      "type": "faker:address:city", <- via Faker::Address.city method
+      "rotate": "rows/5"            <- rows/5 (=>200/5 =>40) unique values
+                                       (and only these values) will appear
     },
-    "State": {
+    {
+      "name": "State",
       "type": "faker:address:state_abbr",
-      "count": 10 <-- you can also use an absolute value as the count
+      "rotate": 10,    <- both rotate and inject? will make sure 10 unique 
+                          values (including "CA") appear
+      "inject": ["CA"]
     },
-    "Age": {
-      "type": "rand:int", <-- random integers in the following range
-      "range": [10, 80] <-- the min will be 10, the max will be 80.
-                            meaning end potins are included
+    {
+      "name": "Age",
+      "type": "rand:int",
+      "range": [10, 80] <- range (including boundaries) for random integers
     },
-    "Height": {
-      "type": "rand:float", <-- random floats in the following range
-      "range": [150, 190],
-      "precision": 3 <-- the precision of the float number
+    {
+      "name": "Height",
+      "type": "rand:float",
+      "range": [150, 190],  <- range for random floats
+      "inject": [200, 210], <- "must-have" values. can be any format
+      "rotate": 20,         <- 20 unique values (including injects)
+      "precision": 2        <- precision of the float numbers
     }
-  }
+  ]
 }
 ```
 
-With the `.csv.json` file, now you can generate a random CSV by invoking the following command:
+With the `<name>.csv.json` file, now you can generate a random CSV by invoking the following command:
 
 ```
 faked_csv -i example.csv.json -o example.csv
@@ -71,25 +84,107 @@ faked_csv -i example.csv.json -o example.csv
 The output CSV looks something like:
 
 ```
-First Name,Last Name,City,State,Age,Height
-Tony,Leffler,O'Keefeshire,MN,47,155.494
-Steve,Pagac,North Rafaela,OR,29,160.008
-Peter,Lu,Paytonfort,NM,10,160.459
-Steve,Bergstrom,Port Janie,MN,42,169.456
-John,Balistreri,Paytonfort,FL,34,152.857
-Tom,Boyle,Port Janie,NV,12,189.016
-Tony,Smith,Schummburgh,NV,26,175.747
-Tony,Bergnaum,O'Keefeshire,NV,44,153.617
-Steve,Luettgen,O'Keefeshire,VA,63,159.235
-John,Gerhold,Port Janie,IN,35,185.655
+ID,First Name,Last Name,City,State,Age,Height
+iW00K,Jane,Bosco,Lake Dandreland,ME,61,170.57
+BzxTl,Steve,Smith,Uniqueside,PA,35,152.93
+vobj8,Tony,Auer,Tressiestad,MS,63,160.86
+X78RS,Steve,Cole,Port Zellachester,OH,72,159.84
+0YpWG,John,Lu,East Vernaview,OH,18,200
+4JaoZ,Peter,Simonis,Wernerchester,HI,25,161.64
+hP48C,Tom,Lu,Uniqueside,ME,45,161.64
+WDQpb,John,Casper,East Felicityshire,OH,41,170.57
+wyPwB,Jane,Johns,Maggiehaven,CA,16,180.42
+VCtYR,Peter,Jast,Schadenberg,ME,41,161.64
+1VYOs,John,Daniel,Port Zellachester,HI,34,200
+V7pg9,Tom,Mayert,Schadenberg,OH,71,152.93
+SmE9w,Jane,Lu,Stephanchester,HI,25,176.95
+ALyok,Tom,Smith,Ryanchester,PA,70,176.95
+fgE5v,Peter,Bailey,Bednarstad,PA,67,170.24
+eBIIM,Peter,Haley,East Vernaview,MS,65,161.64
+5sv4L,Peter,Prosacco,Uniqueside,PA,50,178.25
+a48IS,Peter,Marvin,Kossview,OH,63,200
+9mLcZ,John,VonRueden,East Vernaview,PA,20,174.24
+N8ysZ,Tony,Barrows,Wernerchester,HI,62,159.84
+PxsfA,John,Lind,East Vernaview,OH,21,182.45
+lKM33,Steve,Bosco,South Reese,OH,75,176.95
+HR9H5,Jane,Torp,Tressiestad,PA,23,170.57
+JTRCw,Steve,Hermann,Kunzefort,MS,43,152.93
+Wndzb,Tony,McGlynn,Lake Dandreland,CA,52,160.86
+ksmvF,Peter,Rutherford,Josiannetown,PA,12,184.08
+cfsBG,Peter,Lebsack,Port Zellachester,OH,43,182.45
+7ISEJ,Steve,Altenwerth,Stephanchester,HI,13,159.84
+Letb8,John,Frami,South Reese,HI,65,170.57
 ......
 ```
 
-## Options
+## CLI Options
 
 `-i` to specify the input json configuration file. If omitted, the program will try to find `./faked.csv.json` by default.
 
 `-o` to specify the output CSV file path. If omitted, the program will print the data to stdout.
+
+## More details on configuration file
+
+`rows` to specify how many rows you want to generate in the output CSV file.
+
+`fields` to specify the list of all fields of the generated CSV file.
+
+```
+{
+    "rows": 1000,
+    "fields": [
+        ...
+    ]
+}
+```
+
+For each field, two attributes are required:
+
+`name` to specify the column display name.
+
+`type` to sepcify the format of the data in this column.
+
+Optional attributes help finer control the generated output.
+
+`inject` to specify a list of values that must appear in this column. this is useful when you want to specifically inject some special values into your final CSV. The inject values can be in the same or different format as the type of this column.
+
+`rotate` to specify the number of unique values that will be used in this column. This number will include the number of items you put into `inject` list.
+
+```
+"type": "faker:address:state_abbr",
+"inject": ["CA", "HI"],
+"rotate": 10
+```
+
+In the above example, totally 10 states will be considered in the generation process. 2 of them are given by you, i.e. CA and HI; 8 of them will be faked by calling Faker::Address.state_abbr() method. If you specify `rows` to be greater than 10, some values will be repeated, meaning only 10 unique values will appear and these 10 values are ensured to appear at least once. If you specify `rows` less than 10, only `rows` number of unique values will appear; and your `inject` values will have higher priority, meaning if `rows` is 2, then only CA and HI will appear in the final output.
+
+### Supported types
+
+#### rand:int and rand:float
+
+Random integers/floats. The following attributes are available:
+
+`range` to specify the minimum and maximum value that will be generated.
+
+```
+"range": [10, 100] <- the min=10 and max=100. 10 and 100 are included.
+```
+
+If it's `rand:float`, you can specify `precision` attribute to indicate the digit(s) you want to keep for each of the data.
+
+#### rand:char
+
+Random characters. Only A-Z, a-z and 0-9 will be considered as characters.
+
+`length` to specify how many characters in each of the generated data, e.g. 15 will give you something like `9mLcZHR9H5V7pg9`. This is particularly useful if you want to mimic something like item ID, access token etc.
+
+#### faker:<class>:<method>
+
+This indicates you want to use one of the methods from Faker gem. You can find the list of all methods from [Faker gem's documentation](http://rubydoc.info/github/stympy/faker). Each method is a class name and a method name. Example, `Faker::Internet.url` can be mapped to `faker:internet:url` as a field type in the configuration. As current version, we don't support parameters into the faker method. Future version will add such support.
+
+#### fixed
+
+This indicates you only want to use the provided values in the output. Use `values` as a list to provide the values you want to use. They will be randomly picked independently each time; so no guarantee that every value in the list will be used. If you use `fixed` type, `inject` and `rotate` will be ignored.
 
 ## Contributing
 
