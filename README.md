@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/jiananlu/faked_csv.svg?branch=master)](https://travis-ci.org/jiananlu/faked_csv)
+
 # Faking CSV data made easy
 
 faked_csv, using the awesome [Faker](https://github.com/stympy/faker) gem, helps you to generate CSV file with fake random data in your specified way. You may find it particularly useful in testing something out.
