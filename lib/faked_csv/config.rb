@@ -50,6 +50,10 @@ module FakedCSV
                 end
 
                 case field[:type]
+                when /inc:int/i
+                    field[:type] = :inc_int
+                    field[:start] = cfg["start"].nil? ? 1 : cfg["start"].to_i
+                    field[:step] = cfg["step"].nil? ? 1 : cfg["step"].to_i
                 when /rand:int/i
                     field[:type] = :rand_int
                     if cfg["range"].nil?

@@ -137,4 +137,11 @@ describe FakedCSV::Generator do
         generator.config.fields[0][:data].include?("aa").should == true
         generator.config.fields[0][:data].include?("bb").should == true
     end
+
+    it "increments integers" do
+        generator = FakedCSV::Generator.new FakedCSV::Config.new JSON.parse File.read 'spec/data/increment.csv.json'
+        generator.generate
+        generator.config.fields[0][:data].should == [3, 5, 7, 9, 11]
+        generator.config.fields[1][:data].should == [1, 2, 3, 4, 5]
+    end
 end

@@ -190,6 +190,25 @@ This indicates you want to use one of the methods from Faker gem. You can find t
 
 This indicates you only want to use the provided values in the output. Use `values` as a list to provide the values you want to use. They will be randomly picked independently each time; so no guarantee that every value in the list will be used. If you use `fixed` type, `inject` and `rotate` will be ignored.
 
+#### inc:int
+
+This indicates you want to generate inremental integers as the values for this column. Optional parameters are `start` to indicate the start count; `step` to indicate the step of each incrementation.
+
+Example:
+
+```
+...
+{
+  "name": "ID",
+  "type": "inc:int",
+  "start": 3,
+  "step": 2
+}
+...
+```
+
+will generate something like: [3, 5, 7, 9, 11, ...]
+
 ## Contributing
 
 1. Fork it ( https://github.com/jiananlu/faked_csv/fork )

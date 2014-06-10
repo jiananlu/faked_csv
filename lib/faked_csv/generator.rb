@@ -30,7 +30,13 @@ module FakedCSV
                 field[:data] = []
 
                 # let's get some data!
-                if field[:rotate].nil? || field[:type] == :fixed
+                if field[:type] == :inc_int
+                    i = field[:start]
+                    @config.row_count.times do
+                        field[:data] << i
+                        i += field[:step]
+                    end
+                elsif field[:rotate].nil? || field[:type] == :fixed
                     # not rotating? or fixed values? generate random value each time
                     @config.row_count.times do
                         field[:data] << _random_value(field)
@@ -53,7 +59,7 @@ module FakedCSV
             @config.fields.each do |field|
                 # if it's fixed values or no rotate
                 # we don't want to prepare values for this field
-                if field[:type] == :fixed || field[:rotate].nil?
+                if [:inc_int, :fixed].include?(field[:type]) || field[:rotate].nil?
                     next
                 end
 
