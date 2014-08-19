@@ -8,7 +8,7 @@ describe FakedCSV::Config do
         config.parse
         config.row_count.should == 200
         config.fields.should == [
-            {:name=>"ID", :type=>:rand_char, :length=>5},
+            {:name=>"ID", :type=>:rand_char, :length=>5, :format=>"001/W/wabc"},
             {:name=>"First Name", :type=>:fixed, :values=>["Peter", "Tom", "Jane", "Tony", "Steve", "John"]},
             {:name=>"Last Name", :type=>"faker:name:last_name", :inject=>["Lu", "Smith"]},
             {:name=>"City", :type=>"faker:address:city", :rotate=>40},

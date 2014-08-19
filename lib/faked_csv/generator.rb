@@ -134,7 +134,11 @@ module FakedCSV
             when :rand_float
                 return Generator.rand_float field[:min], field[:max], field[:precision]
             when :rand_char
-                return Generator.rand_char field[:length]
+                if field[:format].nil?
+                    return Generator.rand_char field[:length]
+                else
+                    return Generator.rand_formatted_char field[:format]
+                end
             when :fixed
                 return field[:values].sample
             else # faker
@@ -157,6 +161,41 @@ module FakedCSV
         def self.rand_char(length)
             o = [('a'..'z'), ('A'..'Z'), (0..9)].map { |i| i.to_a }.flatten
             string = (0...length).map { o[rand(o.length)] }.join
+        end
+
+        def self.rand_formatted_char(format)
+            res = []
+            i = 0
+            while i < format.size
+                case a = format[i]
+                when '/'
+                    i += 1
+                    res << single_rand_char(format[i])
+                else
+                    res << a
+                end
+                i += 1
+            end
+            return res.join("")
+        end
+
+        def self.single_rand_char(format)
+            aa = nil
+            case format
+            when 'W' # A-Z
+                aa = ('A'..'Z').to_a
+            when 'w' # a-z
+                aa = ('a'..'z').to_a
+            when 'd' # 0-9
+                aa = (0..9).to_a
+            when 'D' # A-Za-z
+                aa = [('a'..'z'), ('A'..'Z')].map { |i| i.to_a }.flatten
+            when '@'
+                aa = [('a'..'z'), ('A'..'Z'), (0..9)].map { |i| i.to_a }.flatten
+            else
+                raise "invalid format: #{format} in single_rand_char"
+            end
+            return aa[rand(aa.size)]
         end
 
         def self.rand_int(min, max)

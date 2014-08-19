@@ -4,7 +4,8 @@
     {
       "name": "ID",
       "type": "rand:char",
-      "length": 5
+      "length": 5,
+      "format": "001/W/wabc"
     },
     {
       "name": "First Name",

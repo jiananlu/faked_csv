@@ -74,6 +74,7 @@ module FakedCSV
                 when /rand:char/i
                     field[:type] = :rand_char
                     field[:length] = cfg["length"].nil? ? 10 : cfg["length"]
+                    field[:format] = cfg["format"]
                 when /fixed/i
                     field[:type] = :fixed
                     raise "need values for fixed type" if cfg["values"].nil?

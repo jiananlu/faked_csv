@@ -7,6 +7,26 @@ describe FakedCSV::Generator do
         FakedCSV::Generator.rand_char(100).size.should == 100
     end
 
+    it "generates single rand char with format" do
+        ('A'..'Z').to_a.include?(FakedCSV::Generator.single_rand_char('W')).should == true
+        ('a'..'z').to_a.include?(FakedCSV::Generator.single_rand_char('w')).should == true
+        (0..9).to_a.include?(FakedCSV::Generator.single_rand_char('d')).should == true
+        [('a'..'z'), ('A'..'Z')].map { |i| i.to_a }.flatten.include?(FakedCSV::Generator.single_rand_char('D')).should == true
+        [('a'..'z'), ('A'..'Z'), (0..9)].map { |i| i.to_a }.flatten.include?(FakedCSV::Generator.single_rand_char('@')).should == true
+    end
+
+    it "generates rand chars with format" do
+        a = FakedCSV::Generator.rand_formatted_char("123/w123")
+        a.size.should == 7
+        ('a'..'z').to_a.include?(a[3]).should == true
+
+        a = FakedCSV::Generator.rand_formatted_char("/W/w/d/D/@")
+        a.size.should == 5
+
+        a = FakedCSV::Generator.rand_formatted_char("0014000000/@/@/@/@/@/W/W/W")
+        a.size.should == 18
+    end
+
     it "generates rand int" do
         1000.times do
             i = FakedCSV::Generator.rand_int(0, 10)
