@@ -24,13 +24,16 @@ module FakedCSV
         end
 
         def generate
+            puts "preparing values ..."
             prepare_values
 
             @config.fields.each do |field|
+                puts "generating random data for #{field} ..."
                 field[:data] = []
 
                 # let's get some data!
                 if field[:type] == :inc_int
+                    puts "generating increment values ..."
                     i = field[:start]
                     @config.row_count.times do
                         field[:data] << i
@@ -38,16 +41,19 @@ module FakedCSV
                     end
                 elsif field[:rotate].nil? || field[:type] == :fixed
                     # not rotating? or fixed values? generate random value each time
+                    puts "calling generator ..."
                     @config.row_count.times do
                         field[:data] << _random_value(field)
                     end
 
                     # inject user values if given and not fixed type
+                    puts "injecting values ..."
                     unless field[:type] == :fixed || field[:inject].nil?
                         _random_inject(field[:data], field[:inject])
                     end
                 else
                     # rotating? pick from prepared values
+                    puts "selecting data from rotation ..."
                     _random_distribution(@config.row_count, field[:values].size) do |i, j|
                         field[:data][i] = field[:values][j]
                     end
@@ -57,6 +63,7 @@ module FakedCSV
 
         def prepare_values
             @config.fields.each do |field|
+                puts "prepare value for #{field} ..."
                 # if it's fixed values or no rotate
                 # we don't want to prepare values for this field
                 if [:inc_int, :fixed].include?(field[:type]) || field[:rotate].nil?
@@ -70,6 +77,7 @@ module FakedCSV
 
                 values = {}
                 # let's first inject all user values if given
+                puts "injecting user values ..."
                 unless field[:inject].nil?
                     field[:inject].each do |inj|
                         values[inj] = true
@@ -78,6 +86,7 @@ module FakedCSV
                     end
                 end
                 # then generate as many data as we need
+                puts "looping to get enough values ..."
                 _loop do
                     # we want to get <rotate> unique values. stop when we got enough
                     break if values.size >= field[:rotate]
