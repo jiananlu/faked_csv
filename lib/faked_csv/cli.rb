@@ -13,7 +13,7 @@ module FakedCSV
                 opts.on("-i", "--input JSON", "input path to json configuration file. default: ./faked.csv.json") do |input|
                     options[:input] = input
                 end
-                opts.on("-o", "--output CSV", "output path to csv file. if omit, print to STDOUT") do |output|
+                opts.on("-o", "--output CSV", "output path to csv file. if omit, print to output.csv") do |output|
                     options[:output] = output
                 end
                 opts.on("-v", "--version", "print version message") do
@@ -44,21 +44,11 @@ module FakedCSV
 
             generator = FakedCSV::Generator.new FakedCSV::Config.new JSON.parse json
             generator.generate
-            printer = FakedCSV::Printer.new(generator.headers, generator.rows)
-            s = printer.print
 
-            unless options.has_key? :output
-                puts s
-                return
-            end
-
-            begin
-                File.open options[:output], 'w' do |f|
-                    f.write s
-                end
-            rescue Exception=>e
-                puts "error writing to csv file: #{e.to_s}"
-                exit 2
+            out_file_name = options.has_key?(:output) ? options[:output] : 'output.csv'
+            puts "printing to file: #{out_file_name} ..."
+            File.open(out_file_name, 'w') do |file|
+                generator.print_to file
             end
         end
     end

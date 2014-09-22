@@ -11,6 +11,7 @@ module FakedCSV
         end
 
         def rows
+            puts "transforming data to rows ..."
             return @rows unless @rows.nil?
             @rows = []
             (0...@config.row_count).each do |r|
@@ -21,6 +22,16 @@ module FakedCSV
                 @rows << row
             end
             @rows
+        end
+
+        def print_to(writer)
+            (0...@config.row_count).each do |r|
+                @config.fields.each_with_index do |field, index|
+                    suffix = (index == (@config.fields.size - 1)) ? '' : ','
+                    writer.write("#{field[:data][r]}#{suffix}")
+                end
+                writer.write("\n")
+            end
         end
 
         def generate
@@ -42,9 +53,13 @@ module FakedCSV
                 elsif field[:rotate].nil? || field[:type] == :fixed
                     # not rotating? or fixed values? generate random value each time
                     puts "calling generator ..."
+                    index = 0
                     @config.row_count.times do
                         field[:data] << _random_value(field)
+                        print '.' if index % 10000 == 0
+                        index += 1
                     end
+                    puts
 
                     # inject user values if given and not fixed type
                     puts "injecting values ..."
